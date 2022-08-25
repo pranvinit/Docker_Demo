@@ -7,11 +7,10 @@ export default function Home() {
   const [moods, setMoods] = useState({});
 
   const getData = async () => {
-    const ideasRes = await axios.get("/api/ideas/all").data;
-    const moodsRes = await (await axios.get("/api/moods/all")).data;
-    console.log(ideasRes, moodsRes);
-    setIdeas(ideas);
-    setMoods(moods);
+    const ideaRes = await axios.get("/api/ideas/all");
+    const moodRes = await axios.get("/api/moods/all");
+    setIdeas(ideaRes.data.ideas);
+    setMoods(moodRes.data.moods);
   };
 
   useEffect(() => {
@@ -63,16 +62,18 @@ export default function Home() {
         {!!ideas.length && (
           <div className="left">
             <h2>Ideas</h2>
-            {ideas.map((idea) => (
-              <span className="ideaItem">{idea}</span>
+            {ideas.map((idea, i) => (
+              <span key={i} className="ideaItem">
+                {idea}
+              </span>
             ))}
           </div>
         )}
-        {!!moods.length && (
+        {!!Object.keys(moods).length && (
           <div className="right">
             <h2>Moods</h2>
-            {Object.keys(moods).map((key) => (
-              <span className="moodItem">
+            {Object.keys(moods).map((key, i) => (
+              <span key={i} className="moodItem">
                 {key} is {moods[key]}
               </span>
             ))}

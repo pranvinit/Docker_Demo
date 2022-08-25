@@ -1,22 +1,12 @@
 const keys = require("./keys");
-const { createClient } = require("redis");
 const MOODS = require("./moods");
 
-const redisClient = createClient(keys.redisUrl);
-(async () => {
-  redisClient.connect();
-})();
+const Redis = require("ioredis");
 
-redisClient.on("connect", () => {
-  console.log("redis connected");
-});
-
-redisClient.on("error", function (err) {
-  console.log(err);
-});
+const redisClient = new Redis({ port: keys.redisPort, host: keys.redisHost });
 
 // Required config for watching changes in a redis instance
-const subscriber = redisClient.duplicate();
+const subscriber = new Redis({ port: keys.redisPort, host: keys.redisHost });
 
 // add worker file logic
 
@@ -25,9 +15,11 @@ const getMood = () => {
   return MOODS[moodIndex];
 };
 
-subscriber.on("messsage", (channel, name) => {
-  redisClient.hSet("moodmap", name, getMood());
+// Watch for inserts in the redis instace
+subscriber.subscribe("insert", (err, count) => {
+  console.log(`Working for predicting moods`);
 });
 
-// Watch for inserts in the redis instace
-subscriber.subscribe("insert");
+subscriber.on("message", (channel, name) => {
+  redisClient.hset("moodmap", name, getMood());
+});

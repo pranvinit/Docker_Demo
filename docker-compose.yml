@@ -4,10 +4,8 @@ services:
     image: "postgres:latest"
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
-  redis:
-    image: redis
-    container_name: cache
-    command: redis-server
+  cache:
+    image: "redis:latest"
     expose:
       - 6379
 
@@ -31,13 +29,12 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=postgres_password
       - PGPORT=5432
-      - REDIS_URL=redis://cache
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
   client:
     build:
       dockerfile: Dockerfile.dev
       context: ./client
-    environment:
-      - WDS_SOCKET_PORT=0
     volumes:
       - /app/node_modules
       - ./client:/app
@@ -46,7 +43,8 @@ services:
       dockerfile: Dockerfile.dev
       context: ./worker
     environment:
-      - REDIS_URL=redis://cache
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
     volumes:
       - /app/node_modules
       - ./worker:/app
