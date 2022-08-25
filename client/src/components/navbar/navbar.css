@@ -1,0 +1,10 @@
+.navlist {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+
+.active {
+  color: red;
+}

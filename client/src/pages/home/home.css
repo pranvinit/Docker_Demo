@@ -1,0 +1,14 @@
+.top {
+  margin-bottom: 50px;
+}
+
+.bottom {
+  display: flex;
+}
+.bottom .left,
+.bottom .right {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 20px;
+}
